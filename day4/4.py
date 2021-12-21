@@ -3,7 +3,7 @@ bingo_markers = content_list[0].split(',')
 bingo_rows = content_list[2::]  # get rows of cards
 bingo_cards = {}
 card_number = 0
-
+#  part 1
 for i in range(0, len(bingo_rows)):  # separate bingo cards
     if not bingo_cards:  # if dict of cards is empty
         bingo_cards[card_number] = []
@@ -57,4 +57,23 @@ for row in range(len(board)):
     for i in range(len(board[row])):
         if board[row][i] != 'yes':
             sum_numbers += int(board[row][i])
-print(sum_numbers*int(marker))
+print(sum_numbers * int(marker))
+#  part 2
+card_copy = bingo_cards.copy()
+
+
+def run_game_slower(markers, cards):
+    while len(card_copy) > 1:
+        bingo = run_game(markers, card_copy)
+        # if card_copy were bingo cards instead, it would be an inf loop
+        # problem is, if you call run_game with a decreasing card copy
+        # it tries to recognize missing key for some reason
+        # thus this is not done
+        for key, value in dict(card_copy).items():
+            if bingo[1] == value:
+                print(card_copy[key])
+                del card_copy[key]
+    return card_copy
+
+
+print(run_game_slower(bingo_markers, bingo_cards))
