@@ -31,7 +31,7 @@ def check_bingo_horizontal(list):
 def check_bingo_vertical(card):
     for i in range(5):
         iteration = 0
-        for row in range(0, len(card)):
+        for row in range(len(card)):
             if not card[row][i] != 'yes':
                 iteration += 1
             if iteration == 5:
@@ -39,14 +39,14 @@ def check_bingo_vertical(card):
 
 
 def run_game(markers, cards):
-    for marker in markers:  # check if numbers match
-        for card in range(0, len(cards)):
-            for row in range(5):
-                for value in range(5):
-                    if marker == cards[card][row][value]:
-                        cards[card][row][value] = 'yes'
-                    if check_bingo_horizontal(cards[card][row]) is True or check_bingo_vertical(cards[card]) is True:
-                        return marker, cards[card]
+    for marker in markers:
+        for card in cards:
+            for row in cards[card]:
+                for value in row:
+                    if marker == value:
+                        value = 'yes'
+                    if check_bingo_horizontal(row) is True or check_bingo_vertical(cards[card]) is True:
+                        return marker, card
 
 
 marker_board = run_game(bingo_markers, bingo_cards)
@@ -65,14 +65,9 @@ card_copy = bingo_cards.copy()
 def run_game_slower(markers, cards):
     while len(card_copy) > 1:
         bingo = run_game(markers, card_copy)
-        # if card_copy were bingo cards instead, it would be an inf loop
-        # problem is, if you call run_game with a decreasing card copy
-        # it tries to recognize missing key for some reason
-        # thus this is not done
         for key, value in dict(card_copy).items():
             if bingo[1] == value:
-                print(card_copy[key])
-                del card_copy[key]
+                card_copy["bingo"] = card_copy.pop(key)
     return card_copy
 
 
