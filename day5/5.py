@@ -1,3 +1,4 @@
+# part 1 and part 2
 content_list = open("day5.txt", "r").read().splitlines()
 
 sample_list = ['0,9 -> 5,9',
@@ -31,39 +32,45 @@ for line in content_list:
     x1y1 = duples[0].split(',')
     x2y2 = duples[1].split(',')
     if x1y1[0] == x2y2[0] or x1y1[1] == x2y2[1]:  # if x's or y's match
+        # look at horizontal and vertical lines
         wanted_lines.append([x1y1, x2y2])
-        # only look at horizontal and vertical lines
+        # part 2: look at diagonal lines
+    elif abs(int(x1y1[0]) - int(x2y2[0])) == abs(int(x1y1[1]) - int(x2y2[1])):
+        wanted_lines.append([x1y1, x2y2])
 
-# print(len(wanted_lines))  # this is correct on the sample
 
 # iterate over grid
-for i in range(0, len(wanted_lines)):
+for i in range(len(wanted_lines)):
     x1 = int(wanted_lines[i][0][0])
     x2 = int(wanted_lines[i][1][0])
     y1 = int(wanted_lines[i][0][1])
     y2 = int(wanted_lines[i][1][1])
     if x1 == x2:
-        # check to go up or down
-        if y2 >= y1:
-            for space in range(int(y1), int(y2) + 1):  # up to and including
-                grid[space][x1] += 1
-                # print(x1, space, sample_grid[space][x1])
-        elif y1 > y2:
-            for space in range(int(y2), int(y1) + 1):
-                grid[space][x1] += 1
-                # print(x1, space, sample_grid[space][x1])
+        for space in range(min(y1, y2), max(y1, y2) + 1):  # up to and including
+            grid[space][x1] += 1
     elif y1 == y2:
-        # check to go left or right
+        for space in range(min(x1, x2), max(x1, x2) + 1):
+            grid[y1][space] += 1
+    elif abs(x1 - x2) == abs(y1 - y2):  # all diagonals
         if x2 >= x1:
             for space in range(int(x1), int(x2) + 1):
                 grid[y1][space] += 1
-                # print(space, y1, sample_grid[y1][space])
+                if y2 >= y1:
+                    y1 += 1
+                else:
+                    y1 -= 1
         elif x1 > x2:
             for space in range(int(x2), int(x1) + 1):
-                grid[y1][space] += 1
-                # print(space, y1, sample_grid[y1][space])
-    # total iterations: 330
+                grid[y2][space] += 1
+                if y2 > y1:
+                    y2 -= 1
+                else:
+                    y2 += 1
 
+        # horizontal/vertical total iterations: 330
+        # + diagonal iterations: 498
+
+# iterate through grid to calculate number of points
 for i in range(1000):
     for j in range(1000):
         if grid[i][j] > 1:
